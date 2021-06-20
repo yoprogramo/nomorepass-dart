@@ -1,0 +1,10 @@
+name: nomorepass
+version: 1.0.0
+description: >-
+  Librerías para el uso de nomorepass
+  desde Flutter
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+dependencies: 
+  encrypt: ^5.0.0
+  http: ^0.13.3
