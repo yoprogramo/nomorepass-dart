@@ -119,4 +119,48 @@ class Nomorepass {
     }
     return null;
   }
+
+  Future<Map?> start() async {
+    // Comenzamos a preguntar (check) si nos han enviado el pass
+    // dado que esta función es síncrona no devolvemos el control
+    // hasta que tenemos una respuesta (positiva o negativa)
+    // o hasta que el valor del atributo stopped es cierto
+    while (this.stopped == false){
+      final data = {'ticket': this.ticket};
+      var headers = {'User-Agent': 'NoMorePass-Dart/1.0', 'apikey': this.apikey};
+      var url = Uri.parse(this.checkUrl);
+      var resp = await http.post(url, headers: headers, body: data);
+      if (resp.statusCode == 200) {
+        final cuerpo = resp.body;
+        final decoded = json.decode(cuerpo);
+        if (decoded['resultado'] == 'ok'){
+          if (decoded['grant'] == 'deny') {
+            return {'error': 'denied'};
+          } else {
+              if (decoded['grant'] == 'grant') {
+                final res = {'user': decoded["usuario"],'password': nmpc.decrypt(decoded["password"],this.token),'extra' : decoded['extra']};
+                return res;
+              } else {
+                if (decoded['grant'] == 'expired') {
+                  return {'error': 'expired'};
+                } else {
+                  await Future.delayed(Duration(seconds: 4));
+                }
+              }
+          }
+        } else {
+          return {'error': decoded['error']};
+        }
+      } else {
+      return {'error': 'network error'};
+      }
+    }
+  this.stopped = false;
+  return {'error': 'stopped'};
+  }
+
+  void stop () {
+    this.stopped = true;
+  }
+  
 }
