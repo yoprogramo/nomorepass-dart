@@ -15,6 +15,7 @@ class Nomorepass {
   bool stopped = false;
   String ticket = '';
   String token = '';
+  NmpCrypto nmpc = new NmpCrypto();
 
   Nomorepass([String? server, String? apikey]) {
     server ??= 'api.nomorepass.com';
@@ -54,6 +55,66 @@ class Nomorepass {
         this.token = this.newToken();
         final text = 'nomorepass://' + this.token + this.ticket + site;
         return text;
+      }
+    }
+    return null;
+  }
+
+  Future<String?> getQrNomorekeys (String? site, String user, String password, String type, Map? extra) async {
+    // Returns the QR url to send a nomorekeys key to the phone 
+    // basically the same as getQRSend but with nomorekeys://   
+    // only available for soundkey and lightkey right now       
+    // SOUNDKEY passwords are limited to 14 characters
+    // LIGHTKEY are a unsigned int
+    if (type!="SOUNDKEY" && type!="LIGHTKEY") {
+      return null;
+    }
+    if (site == null) {
+      site = "WEBDEVICE";
+    }
+    final data = {'site': site};
+    var headers = {'User-Agent': 'NoMorePass-Dart/1.0', 'apikey': this.apikey};
+    var url = Uri.parse(this.getidUrl);
+    var resp = await http.post(url, headers: headers, body: data);
+    if (resp.statusCode == 200) {
+      final cuerpo = resp.body;
+      final datos = json.decode(cuerpo);
+      if (datos['resultado'] == 'ok') {
+        final token = this.newToken();
+        this.token = token;
+        this.ticket = datos['ticket'];
+        if (type=='SOUNDKEY') {
+          password = password.padRight(14).substring(0,14);
+        } else {
+          password = (int.parse(password)%65536).toString();
+        }
+        final ep = this.nmpc.encrypt(password, token);
+        String extrastr='';
+        if (extra!=null){
+          if (extra.containsKey('extra')){
+            Map theextra = extra['extra'];
+            if (theextra.containsKey('secret')) {
+              extra['extra']['secret']=this.nmpc.encrypt(extra['extra']['secret'], token);
+              extra['extra']['type']=type.toLowerCase();
+            } else {
+              extra['extra'] = {'type': type.toLowerCase()};
+            }
+            extrastr = json.encode(extra);
+          } else {
+            extra = {'extra': {'type': type.toLowerCase()}};
+            extrastr = json.encode(extra);
+          }
+        }
+        final params = {'grant': 'grant','ticket':this.ticket,'user':user,'password':ep,'extra':extrastr};
+        url = Uri.parse(this.grantUrl);
+        resp = await http.post(url, headers: headers, body: params);
+        if (resp.statusCode == 200) {
+          final dat = json.decode(resp.body);
+          if (dat['resultado'] == 'ok') {
+            final text = 'nomorekeys://'+type+token+dat['ticket']+site;
+            return text;
+          }
+        }
       }
     }
     return null;

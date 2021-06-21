@@ -12,4 +12,5 @@ void main() async {
   print(texto);
   print(enc);
   print(dec);
+  print (await nmp.getQrNomorekeys("TestSoundKey","key","Secret key","SOUNDKEY",{'extra': {'secret': '1234567890123456'}}));
 }
