@@ -1,5 +1,6 @@
 name: nomorepass
 version: 1.0.0
+homepage: https://nomorepass.com
 description: >-
   Librerías para el uso de nomorepass
   desde Flutter
