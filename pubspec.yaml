@@ -1,9 +1,10 @@
 name: nomorepass
 version: 1.0.0
 homepage: https://nomorepass.com
+repository: https://github.com/yoprogramo/nomorepass-dart
 description: >-
-  Librerías para el uso de nomorepass
-  desde Flutter
+  Libraries to use nomorepass from
+  Dart/Flutter
 environment:
   sdk: '>=2.13.0 <3.0.0'
 dependencies: 
