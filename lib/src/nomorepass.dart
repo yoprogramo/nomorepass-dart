@@ -145,7 +145,7 @@ class Nomorepass {
       var resp = await http.post(url, headers: headers, body: data);
       if (resp.statusCode == 200) {
         final cuerpo = resp.body;
-        print(cuerpo);
+        //print(cuerpo);
         final decoded = json.decode(cuerpo);
         if (decoded['resultado'] == 'ok') {
           if (decoded['grant'] == 'deny') {
@@ -267,7 +267,7 @@ class Nomorepass {
   }
 
   Future<Map?> sendRemotePassToDevice(String? cloud, String deviceid,
-      String secret, String username, String password) async {
+      String secret, String username, String password, Map? extra) async {
     // Envía una contraseña remota a un dispositivo cloud
     // cloud: url de /extern/send_ticket
     // devideid: id del dispositivo
@@ -291,12 +291,16 @@ class Nomorepass {
       if (dat['resultado'] == 'ok') {
         final ticket = dat['ticket'];
         final ep = nmpc.encrypt(password, token);
+        Map textra = {"type": "remote"};
+        if (extra != null) {
+          textra = extra;
+        }
         params = {
           'grant': 'grant',
           'ticket': ticket,
           'user': username,
           'password': ep,
-          'extra': '{"type": "remote"}'
+          'extra': json.encode(textra)
         };
         url = Uri.parse(this.grantUrl);
         resp = await http.post(url, headers: headers, body: params);
@@ -316,6 +320,7 @@ class Nomorepass {
               dat = json.decode(resp.body);
               return dat;
             } else {
+              print(resp.statusCode);
               return {"error": "error calling $cloudurl"};
             }
           } else {

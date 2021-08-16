@@ -18,10 +18,13 @@ void main() async {
   print("Sending password to remote device");
   print(await nmp.sendRemotePassToDevice(
       'https://test.nmkeys.com/extern/send_ticket',
-      '3TL8NN3L1O',
-      'b46562eaf62def55b451ff22aa4dac25',
+      'DNCM91E3VO',
+      '26bd80fd7c445933525c5768f58e1882',
       'test1remoto',
-      'test1remoto'));
+      'test1remoto', {
+    'type': 'remote',
+    'position': {'lat': 40.3488923, 'lon': -3.8079261}
+  }));
   print("Sent!");
   // Password distribution
   // QR to send a key to mobile phone
