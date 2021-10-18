@@ -50,7 +50,10 @@ void main() async {
   });
   print("Waiting for reception (30sec waiting)");
   res = await nmp.send();
-  // QR to send a password
+  // QR to send a password and expiry test
+  int expiry =
+      (new DateTime.now().microsecondsSinceEpoch / 1000000).round() + 20;
+  nmp.setExpiry(expiry); // 20 sec expiry
   print("Generating QR...");
   print(await nmp.getQrText('prueba'));
   print("Scan this QR to send a password back");

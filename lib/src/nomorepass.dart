@@ -16,6 +16,7 @@ class Nomorepass {
   String ticket = '';
   String token = '';
   NmpCrypto nmpc = new NmpCrypto();
+  int? expiry = null;
 
   Nomorepass([String? server, String? apikey]) {
     server ??= 'api.nomorepass.com';
@@ -42,8 +43,15 @@ class Nomorepass {
     return ret;
   }
 
+  void setExpiry(int? expiry) {
+    this.expiry = expiry;
+  }
+
   Future<String?> getQrText(String site) async {
-    var data = {'site': site};
+    Map<String, String> data = {'site': site};
+    if (this.expiry != null) {
+      data['expiry'] = this.expiry.toString();
+    }
     var headers = {'User-Agent': 'NoMorePass-Dart/1.0', 'apikey': this.apikey};
     var url = Uri.parse(this.getidUrl);
     var resp = await http.post(url, headers: headers, body: data);
@@ -73,7 +81,10 @@ class Nomorepass {
     if (site == null) {
       site = "WEBDEVICE";
     }
-    final data = {'site': site};
+    Map<String, String> data = {'site': site};
+    if (this.expiry != null) {
+      data['expiry'] = this.expiry.toString();
+    }
     var headers = {'User-Agent': 'NoMorePass-Dart/1.0', 'apikey': this.apikey};
     var url = Uri.parse(this.getidUrl);
     var resp = await http.post(url, headers: headers, body: data);
@@ -186,7 +197,10 @@ class Nomorepass {
     if (site == null) {
       site = "WEBDEVICE";
     }
-    final data = {'site': site};
+    Map<String, String> data = {'site': site};
+    if (this.expiry != null) {
+      data['expiry'] = this.expiry.toString();
+    }
     final headers = {
       'User-Agent': 'NoMorePass-Dart/1.0',
       'apikey': this.apikey
@@ -280,6 +294,9 @@ class Nomorepass {
     }
     final token = secret;
     var params = {'site': 'Send remote pass'};
+    if (this.expiry != null) {
+      params['expiry'] = this.expiry.toString();
+    }
     final headers = {
       'User-Agent': 'NoMorePass-Dart/1.0',
       'apikey': this.apikey
