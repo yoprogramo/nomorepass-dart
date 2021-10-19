@@ -9,7 +9,7 @@ void main() async {
 
   // Crypto services
   NmpCrypto nmpc = NmpCrypto();
-  final enc = nmpc.encrypt('lo que quiero enscriptar', 'TOKEN');
+  final enc = nmpc.encrypt('lo que quiero encriptar', 'TOKEN');
   final dec = nmpc.decrypt(enc, 'TOKEN');
   print("Encrypted text: $enc");
   print("Decrypted text: $dec");
@@ -29,8 +29,8 @@ void main() async {
   // Password distribution
   // QR to send a key to mobile phone
   print("Generating QR");
-  print(await nmp
-      .getQrNomorekeys("TestSoundKey", "key", "Secret key", "SOUNDKEY", {
+  print(
+      await nmp.getQrNomorekeys("TestSoundKey", "key", "Secret key", "BLEKEY", {
     'extra': {'secret': '1234567890123456'}
   }));
   print("Scan this QR to receive a new soundkey");

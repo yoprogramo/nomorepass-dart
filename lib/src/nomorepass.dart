@@ -75,7 +75,7 @@ class Nomorepass {
     // only available for soundkey and lightkey right now
     // SOUNDKEY passwords are limited to 14 characters
     // LIGHTKEY are a unsigned int
-    if (type != "SOUNDKEY" && type != "LIGHTKEY") {
+    if (type != "SOUNDKEY" && type != "LIGHTKEY" && type != "BLEKEY") {
       return null;
     }
     if (site == null) {
@@ -97,7 +97,7 @@ class Nomorepass {
         this.ticket = datos['ticket'];
         if (type == 'SOUNDKEY') {
           password = password.padRight(14).substring(0, 14);
-        } else {
+        } else if (type == 'LIGHTKEY') {
           password = (int.parse(password) % 65536).toString();
         }
         final ep = this.nmpc.encrypt(password, token);
