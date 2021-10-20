@@ -218,13 +218,16 @@ class Nomorepass {
         String extrastr = '';
         if (extra != null) {
           if (extra.containsKey('extra')) {
-            Map theextra = extra['extra'];
+            Map theextra = extra['extra']
+                .map((key, value) => MapEntry(key, value?.toString()));
             if (theextra.containsKey('secret')) {
               extra['extra']['secret'] =
                   this.nmpc.encrypt(extra['extra']['secret'], token);
               extra['extra']['type'] = 'pwd';
             } else {
-              extra['extra'] = {'type': 'pwd'};
+              theextra['type'] = 'pwd';
+              extra['extra'] = theextra.map((key, value) => MapEntry(key,
+                  (int.tryParse(value) == null) ? value : int.parse(value)));
             }
             extrastr = json.encode(extra);
           } else {
