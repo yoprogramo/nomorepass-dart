@@ -1,3 +1,6 @@
+## 1.2.1
+
+ - Bug fixes
 ## 1.2.0
 
  - Adds BLE Keys sending
