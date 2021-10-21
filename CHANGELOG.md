@@ -1,3 +1,6 @@
+## 1.2.3
+
+ - More Bug fixes
 ## 1.2.1
 
  - Bug fixes
