@@ -1,3 +1,6 @@
+## 1.2.4
+
+  - Includes generic KEY for nomorekeys
 ## 1.2.3
 
  - More Bug fixes
