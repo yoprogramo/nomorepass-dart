@@ -76,7 +76,7 @@ class Nomorepass {
     // SOUNDKEY passwords are limited to 14 characters
     // LIGHTKEY are a unsigned int
     if (type != "SOUNDKEY" && type != "LIGHTKEY" && type != "BLEKEY") {
-      return null;
+      type = "KEY";
     }
     if (site == null) {
       site = "WEBDEVICE";
@@ -103,15 +103,22 @@ class Nomorepass {
         final ep = this.nmpc.encrypt(password, token);
         String extrastr = '';
         if (extra != null) {
+          if (!extra.containsKey('type')) {
+            extra['type'] = type.toLowerCase();
+          }
           if (extra.containsKey('extra')) {
             Map theextra = extra['extra']
                 .map((key, value) => MapEntry(key, value?.toString()));
             if (theextra.containsKey('secret')) {
               extra['extra']['secret'] =
                   this.nmpc.encrypt(extra['extra']['secret'], token);
-              extra['extra']['type'] = type.toLowerCase();
+              if (!theextra.containsKey('type')) {
+                extra['extra']['type'] = type.toLowerCase();
+              }
             } else {
-              theextra['type'] = type.toLowerCase();
+              if (!theextra.containsKey('type')) {
+                theextra['type'] = type.toLowerCase();
+              }
               extra['extra'] = theextra.map((key, value) => MapEntry(key,
                   (int.tryParse(value) == null) ? value : int.parse(value)));
             }
@@ -130,6 +137,7 @@ class Nomorepass {
           'password': ep,
           'extra': extrastr
         };
+        print(params);
         url = Uri.parse(this.grantUrl);
         resp = await http.post(url, headers: headers, body: params);
         if (resp.statusCode == 200) {
